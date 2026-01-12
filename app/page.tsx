@@ -18,7 +18,7 @@ export default function Home() {
         </h4>
       </main>
       <div className="fixed bottom-4 right-4 text-xs text-zinc-400">
-        Version 0.0.0
+        Version 0.0.1
       </div>
     </div>
   );
