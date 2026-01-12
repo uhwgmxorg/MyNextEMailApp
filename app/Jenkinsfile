@@ -28,7 +28,7 @@ pipeline {
     stage('Checkout') {
       steps {
         checkout([$class: 'GitSCM',
-          branches: [[name: '*/main']],
+          branches: [[name: '*/dev']],
           userRemoteConfigs: [[
             credentialsId: '8ad1dfb8-c7bb-444e-bd10-4fe9473cb6cb',
             url: 'git@github.com:uhwgmxorg/MyNextEMailApp.git'
