@@ -1,6 +1,4 @@
-// next.config.ts
-import type { NextConfig } from "next";
-
+// next.config.mjs
 const isProd = process.env.NODE_ENV === "production";
 
 // Default base path for production
@@ -12,7 +10,8 @@ const basePath = isProd
   ? process.env.NEXT_BASE_PATH ?? defaultProdBasePath
   : "";
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   output: "standalone",
   basePath,
   assetPrefix: isProd ? basePath : undefined,
