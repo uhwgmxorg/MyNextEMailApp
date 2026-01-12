@@ -1,0 +1,163 @@
+// Jenkinsfile – Next.js Standalone Build + Deploy via SSH (systemd-managed)
+pipeline {
+  agent any
+
+  environment {
+    // Node & NVM
+    NVM_DIR = "$HOME/.nvm"
+    NODE_VERSION = "v20.19.0"
+
+    // Next.js telemetry off for CI
+    NEXT_TELEMETRY_DISABLED = "1"
+
+    // Build-time basePath (client & server need /MyNextEMailApp)
+    NEXT_BASE_PATH = "/MyNextEMailApp"
+
+    // Service and remote dir settings
+    SERVICE_NAME = "my-next-email-app"
+    REMOTE_DIR   = "MyNextEMailApp" // relative to SSH Site base dir (/var/www/html)
+  }
+
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout([$class: 'GitSCM',
+          branches: [[name: '*/main']],
+          userRemoteConfigs: [[
+            credentialsId: '8ad1dfb8-c7bb-444e-bd10-4fe9473cb6cb',
+            url: 'git@github.com:uhwgmxorg/MyNextEMailApp.git'
+          ]]
+        ])
+      }
+    }
+
+    stage('Build (standalone)') {
+      steps {
+        dir('.') {
+          sh '''/bin/bash -lc '
+set -euo pipefail
+
+# Load nvm
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+  . "$NVM_DIR/nvm.sh"
+else
+  echo "nvm.sh not found at $NVM_DIR/nvm.sh" >&2
+  exit 1
+fi
+
+# Ensure Node version
+nvm install "$NODE_VERSION"
+nvm use "$NODE_VERSION"
+
+echo "Node:" $(node -v)
+echo "npm :" $(npm -v)
+
+# Reproducible install
+if [ -f package-lock.json ]; then
+  npm ci
+else
+  npm install
+fi
+
+# Build (Next.js standalone output is created by next.config.ts: output=\"standalone\")
+# Export NEXT_BASE_PATH for the build process
+export NEXT_BASE_PATH="/MyNextEMailApp"
+npm run build
+
+# Sanity check: standalone output must exist
+[ -f .next/standalone/server.js ] || { echo "Standalone output not found: .next/standalone/server.js" >&2; exit 1; }
+'
+'''
+        }
+      }
+    }
+
+    stage('Deploy (standalone)') {
+      steps {
+        // SSH-Site "configStarato" must be configured in Jenkins and points to /var/www/html
+        sshPublisher(publishers: [
+          sshPublisherDesc(
+            configName: 'configStarato',
+            verbose: true,
+            transfers: [
+              // 1) Stop service and prepare target dir (clean)
+              sshTransfer(
+                sourceFiles: '',
+                removePrefix: '',
+                remoteDirectory: REMOTE_DIR,
+                execCommand: """
+sudo -n /bin/systemctl stop ${SERVICE_NAME} || true
+sudo -n /bin/mkdir -p /var/www/html/${REMOTE_DIR}/.next
+sudo -n /bin/rm -rf /var/www/html/${REMOTE_DIR}/*
+"""
+              ),
+
+              // 2a) Standalone server bundle (includes server.js + minimal node_modules)
+              // Copy contents of .next/standalone to /var/www/html/MyNextEMailApp/
+              sshTransfer(
+                sourceFiles: '.next/standalone/**',
+                removePrefix: '.next/standalone/',
+                remoteDirectory: REMOTE_DIR
+              ),
+
+              // 2b) Next static assets
+              // Copy .next/static to /var/www/html/MyNextEMailApp/.next/static
+              sshTransfer(
+                sourceFiles: '.next/static/**',
+                removePrefix: '.next/static/',
+                remoteDirectory: "${REMOTE_DIR}/.next/static"
+              ),
+
+              // 2c) Public assets - copy directly to root, NOT to public/ subfolder
+              // Standalone server expects next.svg at /var/www/html/MyNextEMailApp/public/next.svg
+              sshTransfer(
+                sourceFiles: 'public/**',
+                removePrefix: 'public/',
+                remoteDirectory: "${REMOTE_DIR}/public"
+              ),
+
+              // 3) Set consistent ownership (optional, recommended)
+              sshTransfer(
+                sourceFiles: '',
+                removePrefix: '',
+                remoteDirectory: REMOTE_DIR,
+                execCommand: """
+sudo -n /bin/chown -R www-data:www-data /var/www/html/${REMOTE_DIR}
+"""
+              ),
+
+              // 4) Start service and show status
+              sshTransfer(
+                sourceFiles: '',
+                removePrefix: '',
+                remoteDirectory: REMOTE_DIR,
+                execCommand: """
+sudo -n /bin/systemctl start ${SERVICE_NAME}
+sudo -n /bin/systemctl status ${SERVICE_NAME} --no-pager || true
+"""
+              )
+            ]
+          )
+        ])
+      }
+    }
+  }
+
+  post {
+    success {
+      echo '✅ Build & Deploy erfolgreich.'
+    }
+    failure {
+      echo '❌ Build/Deploy fehlgeschlagen. Bitte Logs prüfen.'
+    }
+    always {
+      cleanWs()
+    }
+  }
+}
