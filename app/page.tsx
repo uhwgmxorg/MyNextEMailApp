@@ -1,9 +1,17 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect } from "react";
+import { APP_VERSION } from "@/lib/version";
 
 export default function Home() {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-  console.log("[DEBUG] BasePath:", basePath);
-  console.log("[DEBUG] NODE_ENV:", process.env.NODE_ENV);
+
+  useEffect(() => {
+    console.log("[DEBUG] Version:", APP_VERSION);
+    console.log("[DEBUG] BasePath:", basePath);
+    console.log("[DEBUG] window.location:", window.location.href);
+  }, [basePath]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
@@ -22,7 +30,7 @@ export default function Home() {
         </h4>
       </main>
       <div className="fixed bottom-4 right-4 text-xs text-zinc-400">
-        Version 0.0.9
+        Version {APP_VERSION}
       </div>
     </div>
   );
