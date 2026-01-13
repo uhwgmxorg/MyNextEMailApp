@@ -26,13 +26,24 @@ export async function sendEmailViaResend({
     console.log("[Resend] Sending email to:", to);
     console.log("[Resend] From:", process.env.RESEND_FROM);
 
-    const { data, error } = await resend.emails.send({
+    // Build email payload conditionally
+    const payload: any = {
       from: process.env.RESEND_FROM || "onboarding@resend.dev",
       to,
       subject,
-      text,
-      html,
-    });
+    };
+
+    // Add html or text (at least one is required)
+    if (html) {
+      payload.html = html;
+    } else if (text) {
+      payload.text = text;
+    } else {
+      // Default to subject as text if neither provided
+      payload.text = subject;
+    }
+
+    const { data, error } = await resend.emails.send(payload);
 
     if (error) {
       console.error("[Resend] Error:", error);
