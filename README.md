@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MyNextEMailApp
+
+A demonstration Next.js application showcasing different methods of sending emails from a web application.
+
+## Features
+
+- **SMTP Integration**: Send emails using traditional SMTP servers
+- **Resend API**: Modern email delivery using the Resend service
+- **Interactive UI**: Simple interface to test both email sending methods
+- **Production Ready**: Deployed with standalone mode and systemd integration
+
+## Live Demo
+
+Try it out here: [MyNextEMailApp](https://uhwgmxorg.online/MyNextEMailApp/)
+
+## Tech Stack
+
+- Next.js 16.1.1 (App Router)
+- TypeScript
+- Tailwind CSS
+- Nodemailer (SMTP)
+- Resend SDK
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository
+2. Install dependencies:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+   ```bash
+   npm install
+   ```
+
+3. Configure environment variables (see `.env-template`)
+
+4. Run the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000)
+
+## Environment Variables
+
+Create a `.env` file with the following variables:
+
+```env
+# SMTP Configuration
+SMTP_HOST=smtp.example.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=your-email@example.com
+SMTP_PASS=your-password
+SMTP_FROM=Your Name <your-email@example.com>
+
+# Resend Configuration
+RESEND_API_KEY=re_your_api_key
+RESEND_FROM=Your Name <your-email@resend.dev>
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Deployment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This application is designed to be deployed as a Next.js standalone build with systemd integration.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Licence
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT

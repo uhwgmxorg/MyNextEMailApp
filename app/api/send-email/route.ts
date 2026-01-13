@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendEmailViaSMTP } from "@/lib/email-smtp";
+import { sendEmail, EmailProvider } from "@/lib/email-send";
 
 export async function POST(request: NextRequest) {
   try {
-    const { to, subject, text, html } = await request.json();
+    const { to, subject, text, html, provider } = await request.json();
 
     // Validate input
     if (!to || !subject) {
@@ -13,8 +13,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Default to smtp if provider not specified
+    const emailProvider: EmailProvider = provider || "smtp";
+
     // Send email
-    const result = await sendEmailViaSMTP({ to, subject, text, html });
+    const result = await sendEmail({
+      to,
+      subject,
+      text,
+      html,
+      provider: emailProvider,
+    });
 
     if (result.success) {
       return NextResponse.json({

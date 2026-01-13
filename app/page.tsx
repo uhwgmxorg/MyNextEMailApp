@@ -9,6 +9,7 @@ export default function Home() {
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState("");
   const [recipientEmail, setRecipientEmail] = useState("");
+  const [provider, setProvider] = useState<"smtp" | "resend">("smtp");
 
   console.log("[DEBUG] Version:", APP_VERSION);
   console.log("[DEBUG] BasePath:", basePath);
@@ -34,6 +35,7 @@ export default function Home() {
           subject: "Test Email from MyNextEMailApp",
           text: "This is a test email sent via SMTP",
           html: "<h1>Test Email</h1><p>This is a test email sent via SMTP</p>",
+          provider: provider,
         }),
       });
 
@@ -67,6 +69,30 @@ export default function Home() {
           application demonstrating how to send emails in different ways from a
           Next.js Application.
         </h4>
+        <div className="flex gap-6 items-center">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              value="smtp"
+              checked={provider === "smtp"}
+              onChange={(e) => setProvider(e.target.value as "smtp" | "resend")}
+              disabled={sending}
+              className="w-4 h-4 cursor-pointer"
+            />
+            <span className="text-sm">SMTP</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              value="resend"
+              checked={provider === "resend"}
+              onChange={(e) => setProvider(e.target.value as "smtp" | "resend")}
+              disabled={sending}
+              className="w-4 h-4 cursor-pointer"
+            />
+            <span className="text-sm">Resend</span>
+          </label>
+        </div>
         <div className="flex gap-3 w-full max-w-md">
           <input
             type="email"
