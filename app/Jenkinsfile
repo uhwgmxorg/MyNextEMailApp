@@ -1,4 +1,5 @@
 // Jenkinsfile – Next.js Standalone Build + Deploy via SSH (systemd-managed)
+// Requires 0.0.14 or later
 pipeline {
   agent any
 
