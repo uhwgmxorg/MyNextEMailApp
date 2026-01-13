@@ -1,0 +1,13 @@
+# Resend E-Mail Service
+#EMAIL_SERVICE=resend
+RESEND_API_KEY=myKey
+RESEND_FROM=Phone App <noreply@app-resend.dev>
+
+# Legacy SMTP
+EMAIL_SERVICE=smtp
+SMTP_HOST=smtp.de
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=admin@domain.com
+SMTP_PASS=myPassword
+SMTP_FROM=App <admin@domain.com>
