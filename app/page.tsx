@@ -4,12 +4,29 @@ import Image from "next/image";
 import { useState } from "react";
 import { APP_VERSION } from "@/lib/version";
 
+const PROVIDERS = [
+  {
+    id: "smtp",
+    label: "SMTP",
+    subject: "Test Email from MyNextEMailApp (SMTP)",
+    text: "This is a test email sent via SMTP",
+    html: "<h1>Test Email</h1><p>This is a test email sent via SMTP</p>",
+  },
+  {
+    id: "resend",
+    label: "Resend",
+    subject: "Test Email from MyNextEMailApp (Resend)",
+    text: "This is a test email sent via Resend",
+    html: "<h1>Test Email</h1><p>This is a test email sent via Resend</p>",
+  },
+];
+
 export default function Home() {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState("");
   const [recipientEmail, setRecipientEmail] = useState("");
-  const [provider, setProvider] = useState<"smtp" | "resend">("smtp");
+  const [provider, setProvider] = useState<string>(PROVIDERS[0].id);
 
   console.log("[DEBUG] Version:", APP_VERSION);
   console.log("[DEBUG] BasePath:", basePath);
@@ -27,14 +44,16 @@ export default function Home() {
     setMessage("");
 
     try {
+      const selected = PROVIDERS.find((p) => p.id === provider) ?? PROVIDERS[0];
+
       const response = await fetch(`${basePath}/api/send-email`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           to: recipientEmail,
-          subject: "Test Email from MyNextEMailApp",
-          text: "This is a test email sent via SMTP",
-          html: "<h1>Test Email</h1><p>This is a test email sent via SMTP</p>",
+          subject: selected.subject,
+          text: selected.text,
+          html: selected.html,
           provider: provider,
         }),
       });
@@ -70,28 +89,22 @@ export default function Home() {
           Next.js Application.
         </h4>
         <div className="flex gap-6 items-center">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="radio"
-              value="smtp"
-              checked={provider === "smtp"}
-              onChange={(e) => setProvider(e.target.value as "smtp" | "resend")}
-              disabled={sending}
-              className="w-4 h-4 cursor-pointer"
-            />
-            <span className="text-sm">SMTP</span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="radio"
-              value="resend"
-              checked={provider === "resend"}
-              onChange={(e) => setProvider(e.target.value as "smtp" | "resend")}
-              disabled={sending}
-              className="w-4 h-4 cursor-pointer"
-            />
-            <span className="text-sm">Resend</span>
-          </label>
+          {PROVIDERS.map((p) => (
+            <label
+              key={p.id}
+              className="flex items-center gap-2 cursor-pointer"
+            >
+              <input
+                type="radio"
+                value={p.id}
+                checked={provider === p.id}
+                onChange={() => setProvider(p.id)}
+                disabled={sending}
+                className="w-4 h-4 cursor-pointer"
+              />
+              <span className="text-sm">{p.label}</span>
+            </label>
+          ))}
         </div>
         <div className="flex gap-3 w-full max-w-md">
           <input
