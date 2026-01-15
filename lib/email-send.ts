@@ -1,7 +1,8 @@
 import { sendEmailViaSMTP } from "./email-smtp";
 import { sendEmailViaResend } from "./email-resend";
+import { sendEmailViaSendGrid } from "./email-sendgrid";
 
-export type EmailProvider = "smtp" | "resend";
+export type EmailProvider = "smtp" | "resend" | "sendgrid";
 
 interface SendEmailOptions {
   to: string;
@@ -30,6 +31,8 @@ export async function sendEmail({
 
   if (provider === "resend") {
     return sendEmailViaResend({ to, subject, text, html });
+  } else if (provider === "sendgrid") {
+    return sendEmailViaSendGrid({ to, subject, text, html });
   } else {
     return sendEmailViaSMTP({ to, subject, text, html });
   }

@@ -19,6 +19,13 @@ const PROVIDERS = [
     text: "This is a test email sent via Resend",
     html: "<h1>Test Email</h1><p>This is a test email sent via Resend</p>",
   },
+  {
+    id: "sendgrid",
+    label: "SendGrid",
+    subject: "Test Email from MyNextEMailApp (SendGrid)",
+    text: "This is a test email sent via SendGrid",
+    html: "<h1>Test Email</h1><p>This is a test email sent via SendGrid</p>",
+  },
 ];
 
 export default function Home() {
