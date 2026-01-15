@@ -60,20 +60,25 @@ export async function sendEmailViaSendGrid({
     return { success: true, messageId };
   } catch (error: any) {
     console.error("[SendGrid] Error sending email:", error);
-    
+
     // Log detailed error information from SendGrid
     if (error.response) {
       console.error("[SendGrid] Status Code:", error.code);
-      console.error("[SendGrid] Response Body:", JSON.stringify(error.response?.body, null, 2));
+      console.error(
+        "[SendGrid] Response Body:",
+        JSON.stringify(error.response?.body, null, 2)
+      );
       console.error("[SendGrid] Response Headers:", error.response?.headers);
     }
-    
+
     // Extract detailed error message
     let errorMessage = error instanceof Error ? error.message : "Unknown error";
     if (error.response?.body?.errors) {
-      errorMessage = error.response.body.errors.map((e: any) => e.message).join(", ");
+      errorMessage = error.response.body.errors
+        .map((e: any) => e.message)
+        .join(", ");
     }
-    
+
     return {
       success: false,
       error: errorMessage,
