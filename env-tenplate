@@ -5,14 +5,14 @@ SMTP_PORT=465
 SMTP_SECURE=true
 SMTP_USER=admin@domain.com
 SMTP_PASS=myPassword
-SMTP_FROM=App <admin@domain.com>
+SMTP_FROM=MyNextEMailApp <admin@domain.com>
 
 # Resend E-Mail Service
 #EMAIL_SERVICE=resend
 RESEND_API_KEY=myKey
-RESEND_FROM=Phone App <noreply@app-resend.dev>
+RESEND_FROM=PMyNextEMailApp <noreply@app-resend.dev>
 
 # SendGrid E-Mail Service
 #EMAIL_SERVICE=sendgrid
 SENDGRID_API_KEY=mySendgridApiKey
-SENDGRID_FROM=noreply@yourdomain.com
+SENDGRID_FROM=MyNextEMailApp <noreply@yourdomain.com>
