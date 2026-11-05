@@ -95,6 +95,14 @@ export default function Home() {
           application demonstrating how to send emails in different ways from a
           Next.js Application.
         </h4>
+        <a
+          href="https://github.com/uhwgmxorg/MyNextEMailApp"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-zinc-600 underline underline-offset-4 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+        >
+          View on GitHub
+        </a>
         <div className="flex gap-6 items-center">
           {PROVIDERS.map((p) => (
             <label
