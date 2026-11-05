@@ -13,7 +13,7 @@ pipeline {
     // --- Jenkins Plugins / Verbindungen ---
     SSH_SITE           = 'configStarato'
     GIT_URL            = 'git@github.com:uhwgmxorg/MyNextEMailApp.git'
-    GIT_BRANCH         = 'dev'
+    GIT_BRANCH         = 'main'
     GIT_CREDENTIALS_ID = '8ad1dfb8-c7bb-444e-bd10-4fe9473cb6cb'
 
     // --- Node / Next ---
