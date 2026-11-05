@@ -40,6 +40,12 @@ Try it out here: [MyNextEMailApp](https://uhwgmxorg.online/MyNextEMailApp/)
 
 5. Open [http://localhost:3000](http://localhost:3000)
 
+6. Build the App:
+
+   ```bash
+   npm run build
+   ```
+
 ## Environment Variables
 
 Create a `.env` file with the following variables:
